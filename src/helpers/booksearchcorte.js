@@ -2,18 +2,22 @@ var webdriver = require('selenium-webdriver'),
     By = webdriver.By,
     until = webdriver.until;
 
-    let driver = new webdriver.Builder()
-    .forBrowser('chrome')
-    .build();
+let driver = new webdriver.Builder()
+.forBrowser('chrome')
+.build();
 
-async function main () {
+const Book = require("../models/Book");
+
+let books = [];
+
+async function Corte (searching) {
 
     try {
         driver.get('https://www.elcorteingles.es/libros/libros-de-texto/');
     
         var search = await driver.findElement(By.id('search-box'));
     
-        await search.sendKeys(process.argv[2]);
+        await search.sendKeys(searching);
         
         var btsubmit = await driver.findElement(By.id('site-search-form'));
     
@@ -44,14 +48,21 @@ async function main () {
             if(ifaoldprecio.length>0) {
                 oldprecio = await ifaoldprecio[0].getText();
                 descount = (100-((parseFloat(precio)*100)/parseFloat(oldprecio))).toFixed(2);;
-                console.log(titulo + " " + autor+" "+precio+" oldprice "+ oldprecio + " con un descuento de "+descount+"%");
+                //console.log(titulo + " " + autor+" "+precio+" oldprice "+ oldprecio + " con un descuento de "+descount+"%");
+                let book = new Book(titulo, autor, oldprecio, precio, descount, "El Corte Ingles");
+                books.push(book);
             } else {
-                console.log(titulo + " " + autor+" "+precio);
+                //console.log(titulo + " " + autor+" "+precio);
+                let book = new Book(titulo, autor, precio, null, null, "El Corte Ingles");
+                books.push(book);
+
             }
         }
     } finally {
         await driver.quit();
     }    
+
+    return books;
 }
 
-main();
+module.exports = Corte;
