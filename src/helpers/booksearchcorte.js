@@ -2,7 +2,7 @@ var webdriver = require('selenium-webdriver'),
     By = webdriver.By,
     until = webdriver.until;
 
-var {discountPrice, cleanPrice} = require('./cleanDiscount');
+var cleanDiscount = require("./cleanDiscount");
 
 const Book = require("../models/Book");
 
@@ -48,12 +48,15 @@ async function Corte (searching) {
             let autor = await hautor.getText();
             if(ifaoldprecio.length>0) {
                 oldprecio = await ifaoldprecio[0].getText();
-                descount = (100-((parseFloat(precio)*100)/parseFloat(oldprecio))).toFixed(2);;
+                precio = cleanDiscount.cleanPrice(precio);
+                oldprecio = cleanDiscount.cleanPrice(precio);
+                descount = cleanDiscount.discountPrice(oldprecio,precio);
                 //console.log(titulo + " " + autor+" "+precio+" oldprice "+ oldprecio + " con un descuento de "+descount+"%");
                 let book = new Book(titulo, autor, oldprecio, precio, descount, "El Corte Ingles");
                 books.push(book);
             } else {
                 //console.log(titulo + " " + autor+" "+precio);
+                precio = cleanDiscount.cleanPrice(precio);
                 let book = new Book(titulo, autor, precio, null, null, "El Corte Ingles");
                 books.push(book);
 

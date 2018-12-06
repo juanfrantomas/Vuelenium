@@ -2,12 +2,12 @@ var webdriver = require('selenium-webdriver'),
     By = webdriver.By,
     until = webdriver.until;
 
-    
-    const Book = require("../models/Book");
-    
-    let books = [];
+const Book = require("../models/Book");
+var cleanDiscount = require("./cleanDiscount");
 
-    let driver; 
+let books = [];
+
+let driver; 
 async function Fnac (searching) {
         
     
@@ -54,13 +54,15 @@ async function Fnac (searching) {
             if(ifaoldprecio.length>0) {
                 let aoldprecio = await articulo.findElements(By.className("oldPrice"));    
                 oldprecio = await aoldprecio[0].getText();
-
-                descount = (100-((parseFloat(precio)*100)/parseFloat(oldprecio))).toFixed(2);
+                precio = cleanDiscount.cleanPrice(precio);
+                oldprecio = cleanDiscount.cleanPrice(precio);
+                descount = cleanDiscount.discountPrice(oldprecio,precio);
                 //console.log(titulo + " " + autor+" "+precio+" oldprice "+ oldprecio + " con un descuento de "+descount+"%");
                 let book = new Book(titulo, autor, oldprecio, precio, descount, "Fnac");
                 books.push(book);
             } else {
                 //console.log(titulo + " " + autor+" "+precio);
+                precio = cleanDiscount.cleanPrice(precio);
                 let book = new Book(titulo, autor, precio, null, null,"Fnac");
                 books.push(book);
             }
