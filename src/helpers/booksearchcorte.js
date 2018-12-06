@@ -2,15 +2,16 @@ var webdriver = require('selenium-webdriver'),
     By = webdriver.By,
     until = webdriver.until;
 
-let driver = new webdriver.Builder()
-.forBrowser('chrome')
-.build();
+var {discountPrice, cleanPrice} = require('./cleanDiscount');
 
 const Book = require("../models/Book");
 
 let books = [];
 
 async function Corte (searching) {
+    let driver = new webdriver.Builder()
+    .forBrowser('chrome')
+    .build();
 
     try {
         driver.get('https://www.elcorteingles.es/libros/libros-de-texto/');

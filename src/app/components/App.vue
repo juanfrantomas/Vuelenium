@@ -97,7 +97,6 @@
                     this.validation.push("Selecciona una o dos tiendas");
                 }
                 if(this.validation.length == 0){
-                    console.log(this.search);
                     fetch("/books", {
                         method: "POST",
                         body: JSON.stringify(this.search),

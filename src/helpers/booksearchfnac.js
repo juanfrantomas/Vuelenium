@@ -2,17 +2,20 @@ var webdriver = require('selenium-webdriver'),
     By = webdriver.By,
     until = webdriver.until;
 
-let driver = new webdriver.Builder()
-.forBrowser('chrome')
-.build();
+    
+    const Book = require("../models/Book");
+    
+    let books = [];
 
-const Book = require("../models/Book");
-
-let books = [];
-
-async function Amazon (searching) {
-
+    let driver; 
+async function Fnac (searching) {
+        
+    
     try {
+        driver = new webdriver.Builder()
+        .forBrowser('chrome')
+        .build();
+
         driver.get('https://www.fnac.es/');
         
         var select_category = await driver.findElement(By.className("Header__aisle-list"));
@@ -51,13 +54,14 @@ async function Amazon (searching) {
             if(ifaoldprecio.length>0) {
                 let aoldprecio = await articulo.findElements(By.className("oldPrice"));    
                 oldprecio = await aoldprecio[0].getText();
-                descount = (100-((parseFloat(precio)*100)/parseFloat(oldprecio))).toFixed(2);;
+
+                descount = (100-((parseFloat(precio)*100)/parseFloat(oldprecio))).toFixed(2);
                 //console.log(titulo + " " + autor+" "+precio+" oldprice "+ oldprecio + " con un descuento de "+descount+"%");
-                let book = new Book(titulo, autor, oldprecio, precio, descount, "Amazon");
+                let book = new Book(titulo, autor, oldprecio, precio, descount, "Fnac");
                 books.push(book);
             } else {
                 //console.log(titulo + " " + autor+" "+precio);
-                let book = new Book(titulo, autor, precio, null, null,"Amazon");
+                let book = new Book(titulo, autor, precio, null, null,"Fnac");
                 books.push(book);
             }
         }
@@ -65,7 +69,7 @@ async function Amazon (searching) {
         await driver.quit();
     }
     
-    return books;    
+    return JSON.stringify(books);    
 }
 
-module.exports = Amazon;
+module.exports = Fnac;
