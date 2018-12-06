@@ -1,5 +1,5 @@
-function Book (nombre, autor, precio, precioreducido, descuento, tienda) {
-    this.nombre = nombre;
+function Book (titulo, autor, precio, precioreducido, descuento, tienda) {
+    this.titulo = titulo;
     this.autor = autor;
     this.precio = precio;
     this.precioreducido = precioreducido;

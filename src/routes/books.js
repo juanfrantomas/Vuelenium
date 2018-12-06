@@ -9,22 +9,25 @@ router.get("/",async (req, res)=>{
 })
 
 router.post("/", async(req, res)=>{
+    
     let titulo = req.body.title;
     let autor = req.body.autor;
-    let checkAma = req.body.checkAma;
-    let checkCorte = req.body.checkCorte;
+    let checkAma = req.body.fnac;
+    let checkCorte = req.body.corte; 
     
     let books = [
         {
-            title:"Harry Potter y La pieda filosofal",
+            titulo:"Harry Potter y La pieda filosofal",
             autor: "Pepe piscinas",
             precio: "20",
             tienda: "Amazon"
         },
         {
-            title:"La vida de Larry Wints",
+            titulo:"La vida de Larry Wints",
             autor: "Pepe Casas",
             precio: "40",
+            precioreducido: "20",
+            descuento: "50",
             tienda: "Fnac"
         }
     ];
