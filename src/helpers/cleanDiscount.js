@@ -3,9 +3,9 @@ exports.discountPrice = function (oldprecio,precio){
 }
 
 exports.cleanPrice = function (precio){
-    precio = precio.trim();
-    precio = precio.replace("€","");
-    precio = precio.replace(",",".")
+    precio = precio.toString().replace(" ","");
+    precio = precio.toString().replace("€","");
+    precio = precio.toString().replace(",",".")
     precio = parseFloat(precio);
     return precio;
 }

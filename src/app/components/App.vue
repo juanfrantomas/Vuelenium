@@ -39,7 +39,8 @@
                                 </div>
                             </div>
                             <div class="text-center py-4 mt-3">
-                                <button class="btn btn-green" type="submit">Buscar</button>
+                                <button v-if="!this.spinner" class="btn btn-green" type="submit">Buscar</button>
+                                <div v-if="this.spinner" class="loader border-top-success mx-auto"></div>
                             </div>
                         </form>
                     </div>
@@ -84,12 +85,14 @@
                     corte: ''
                 },
                 validation: [],
-                books: []
+                books: [],
+                spinner: false
             }
         },
         methods:{
             searchBook() {
                 this.validation = [];
+                this.spinner = true;
                 if(!this.search.title && !this.search.autor){
                     this.validation.push("Introduce un titulo o un autor");
                 }
@@ -106,7 +109,13 @@
                         }
                     })
                     .then(res => res.json()) //Lo recibimos y lo convertimos a json
-                    .then(data => this.books = data); //Una vez convertido lo mostramos por pantalla
+                    .then(data =>{
+                        this.books = data;
+                        this.spinner = false;
+                    })
+                    .catch(err => {
+                        this.validation.push(err);
+                    }); //Una vez convertido lo mostramos por pantalla
                 }
             },
             created() {

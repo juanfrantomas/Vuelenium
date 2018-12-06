@@ -49,7 +49,7 @@ async function Corte (searching) {
             if(ifaoldprecio.length>0) {
                 oldprecio = await ifaoldprecio[0].getText();
                 precio = cleanDiscount.cleanPrice(precio);
-                oldprecio = cleanDiscount.cleanPrice(precio);
+                oldprecio = cleanDiscount.cleanPrice(oldprecio);
                 descount = cleanDiscount.discountPrice(oldprecio,precio);
                 //console.log(titulo + " " + autor+" "+precio+" oldprice "+ oldprecio + " con un descuento de "+descount+"%");
                 let book = new Book(titulo, autor, oldprecio, precio, descount, "El Corte Ingles");
@@ -66,7 +66,7 @@ async function Corte (searching) {
         await driver.quit();
     }    
 
-    return books;
+    return JSON.stringify(books);
 }
 
 module.exports = Corte;

@@ -38,7 +38,8 @@ async function Fnac (searching) {
         for(let articulo of articulos) {
             let atitulo = await articulo.findElement(By.className("js-minifa-title"));
             let aautor = await articulo.findElement(By.className("Article-descSub"));
-            let hautor = await aautor.findElement(By.tagName("a"));
+            let hautor = await aautor.findElements(By.tagName("a"));
+            (hautor.length>0) ? hautor = await aautor.findElement(By.tagName("a")) : hautor = '';
             let aprecio = await articulo.findElement(By.className("userPrice"));
             let ifaoldprecio;
             try{
@@ -50,19 +51,20 @@ async function Fnac (searching) {
             let descount;
             let precio = await aprecio.getText();
             let titulo = await atitulo.getText();
-            let autor = await hautor.getText();
+            let autor;
+            (!hautor)? autor = "Sin autor asignado": autor = await hautor.getText();
             if(ifaoldprecio.length>0) {
                 let aoldprecio = await articulo.findElements(By.className("oldPrice"));    
                 oldprecio = await aoldprecio[0].getText();
-                precio = cleanDiscount.cleanPrice(precio);
-                oldprecio = cleanDiscount.cleanPrice(precio);
-                descount = cleanDiscount.discountPrice(oldprecio,precio);
+                precio = await cleanDiscount.cleanPrice(precio);
+                oldprecio = await cleanDiscount.cleanPrice(oldprecio);
+                descount = await cleanDiscount.discountPrice(oldprecio,precio);
                 //console.log(titulo + " " + autor+" "+precio+" oldprice "+ oldprecio + " con un descuento de "+descount+"%");
                 let book = new Book(titulo, autor, oldprecio, precio, descount, "Fnac");
                 books.push(book);
             } else {
                 //console.log(titulo + " " + autor+" "+precio);
-                precio = cleanDiscount.cleanPrice(precio);
+                precio = await cleanDiscount.cleanPrice(precio);
                 let book = new Book(titulo, autor, precio, null, null,"Fnac");
                 books.push(book);
             }

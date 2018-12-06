@@ -14,10 +14,23 @@ router.post("/", async(req, res)=>{
     let titulo = req.body.title;
     let autor = req.body.autor;
     let fnac = req.body.fnac;
-    let checkCorte = req.body.corte;
+    let corte = req.body.corte;
+
+    //Busqueda con o sin autor, con o sin titulo
+    let busqueda = '';
+    if(titulo && autor) busqueda = titulo+" "+autor;
+    else if (titulo && !autor) busqueda = titulo;
+    else busqueda = autor;
 
     if(fnac == true) {
-        let auxbooks = await Fnac(titulo);
+        let auxbooks = await Fnac(busqueda);
+        auxbooks = JSON.parse(auxbooks);
+        for(book of auxbooks){
+            books.push(book);
+        }
+    }
+    if(corte == true) {
+        let auxbooks = await Corte(busqueda);
         auxbooks = JSON.parse(auxbooks);
         for(book of auxbooks){
             books.push(book);
