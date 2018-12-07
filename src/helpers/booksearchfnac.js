@@ -6,6 +6,7 @@ const Book = require("../models/Book");
 var cleanDiscount = require("./cleanDiscount");
 
 let books = [];
+let result = [];
 
 let driver; 
 async function Fnac (searching) {
@@ -72,8 +73,9 @@ async function Fnac (searching) {
     } finally {
         await driver.quit();
     }
-    
-    return JSON.stringify(books);    
+    result = books;
+    books = [];
+    return JSON.stringify(result);    
 }
 
 module.exports = Fnac;

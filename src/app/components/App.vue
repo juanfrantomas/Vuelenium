@@ -3,7 +3,7 @@
         <nav class="navbar navbar-light bg-light">
             <a href="/" class="navbar-brand mx-auto"><img src="img/logo.png" width="100px"/></a>
         </nav>
-        <div class="row m-5">
+        <div class="row m-4">
             <div class="col-md-4">
                 <div class="card">
                     <div class="card-body">
@@ -64,7 +64,7 @@
                         <th class="font-italic">{{libro.autor}}</th>
                         <th v-bind:class="[(libro.precioreducido) ? 'tachado' : '']">{{libro.precio}}€</th>
                         <th class="green-text font-weight-bold large">{{(libro.precioreducido)?libro.precioreducido+"€":""}}</th>
-                        <th><small>{{(libro.descuento)?"-"+libro.descuento+"%":""}}</small></th>
+                        <th><small>{{(libro.descuento && libro.descuento.toString() != "NaN")?"-"+libro.descuento+"%":""}}</small></th>
                         <th>{{libro.tienda}}</th>
                     </tr>
                 </tbody>
@@ -83,7 +83,7 @@
                     autor: '',
                     fnac: '',
                     corte: '',
-                    sortOrder: 1
+                    sortOrder: -1
                 },
                 validation: [],
                 books: [],
@@ -93,7 +93,7 @@
         methods:{
             searchBook() {
                 this.validation = [];
-                this.spinner = true;
+                this.books = [];
                 if(!this.search.title && !this.search.autor){
                     this.validation.push("Introduce un titulo o un autor");
                 }
@@ -101,6 +101,7 @@
                     this.validation.push("Selecciona una o dos tiendas");
                 }
                 if(this.validation.length == 0){
+                    this.spinner = true;
                     fetch("/books", {
                         method: "POST",
                         body: JSON.stringify(this.search),
@@ -109,9 +110,13 @@
                             'Content-type': 'application/json'
                         }
                     })
-                    .then(res => res.json()) //Lo recibimos y lo convertimos a json
+                    .then(res=>res.json()) //Lo recibimos y lo convertimos a json
                     .then(data =>{
-                        this.books = data;
+                        if(data.length > 0){
+                            this.books = data;
+                        }else{
+                            this.validation.push("No se han encontrado libros");
+                        }
                         this.spinner = false;
                     })
                     .catch(err => {
@@ -120,17 +125,22 @@
                 }
             },
             filter(filtro){
-                this.books.sort((a,b)=>{
+                (this.sortOrder == 1)? this.sortOrder = -1 : this.sortOrder = 1;
+                return this.books.sort((a,b)=>{
+                    if (!a[filtro]) a[filtro] = 0;
+                    if (!b[filtro]) b[filtro] = 0;
+                    
+                    (isNaN(parseFloat(a[filtro].toString().replace(",","."))))? a[filtro]=a[filtro] :a[filtro]=parseFloat(a[filtro].toString().replace(",","."));        
+                    (isNaN(parseFloat(b[filtro].toString().replace(",","."))))? b[filtro]=b[filtro] :b[filtro]=parseFloat(b[filtro].toString().replace(",","."));
                     var result = (a[filtro] < b[filtro]) ? -1 : (a[filtro] > b[filtro]) ? 1 : 0;
                     return result * this.sortOrder;
                 });
-                (this.sortOrder == 1)? this.sortOrder = -1 : this.sortOrder = 1;
             }
         },
         mounted() {
-            //Ejecutar una vez creado el componente
-            let book = {
-                titulo: "Hola Juanfra",
+            //Ejecutar una vez creado el componente TEST Books Front-end
+/*             let book = {
+                titulo: "Libro de Juanfra",
                 autor: "Juanfran",
                 precio: "20",
                 precioreducido: "18",
@@ -140,7 +150,7 @@
             this.books.push(book);
 
             book = {
-                titulo: "asdfasdf",
+                titulo: "Libro de Jorge",
                 autor: "Jorge",
                 precio: "50",
                 precioreducido: "30",
@@ -148,7 +158,27 @@
                 tienda: "Amazon"
             }
             this.books.push(book);
-            console.log("empezado");
+        
+            book = {
+                titulo: "Libro de Jorge",
+                autor: "Jorge",
+                precio: "5",
+                precioreducido: "30",
+                descuento: "12",
+                tienda: "Amazon"
+            }
+            this.books.push(book);
+                        book = {
+                titulo: "Libro de petete",
+                autor: "petete",
+                precio: "510000",
+                precioreducido: "30",
+                descuento: "12",
+                tienda: "Amazon"
+            }
+            this.books.push(book);
+ */
+        
         }
     }
 </script>

@@ -7,6 +7,7 @@ var cleanDiscount = require("./cleanDiscount");
 const Book = require("../models/Book");
 
 let books = [];
+let result = [];
 
 async function Corte (searching) {
     let driver = new webdriver.Builder()
@@ -31,13 +32,15 @@ async function Corte (searching) {
 
             let atitulo = await articulo.findElement(By.className("js-product-click"));
             let hautor = await productname.findElement(By.className("c12"));
-
-            let productprice = await articulo.findElement(By.className("product-price"));
+            let productprice = await articulo.findElements(By.className("product-price"));
+            
+            let atrr = await productprice[0].getAttribute("class");
+            (atrr.toString().includes("hidden"))? productprice = productprice[1]: productprice = productprice[0];
 
             let aprecio = await productprice.findElement(By.className("current"));
             let ifaoldprecio;
             try{
-                ifaoldprecio = await articulo.findElements(By.className("stroked"));
+                ifaoldprecio = await productprice.findElements(By.className("stroked"));
             }catch (NoSuchElementException){
                 ifaoldprecio = false;
             }
@@ -61,12 +64,14 @@ async function Corte (searching) {
                 books.push(book);
 
             }
+
         }
     } finally {
         await driver.quit();
     }    
-
-    return JSON.stringify(books);
+    result = books;
+    books = [];
+    return JSON.stringify(result);
 }
 
 module.exports = Corte;
