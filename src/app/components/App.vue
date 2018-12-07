@@ -50,12 +50,12 @@
                 <table class="table table-hover">
                 <thead>
                     <tr>
-                    <th scope="col">Titulo</th>
-                    <th scope="col">Autor</th>
-                    <th scope="col">Precio</th>
-                    <th scope="col">Oferta</th>
-                    <th scope="col">Descuento</th>
-                    <th scope="col">Tienda</th>
+                    <th scope="col" class="filtros" v-on:click="filter('titulo')">Titulo <i class="fas fa-arrows-alt-v grey-text"></i></th>
+                    <th scope="col" class="filtros" v-on:click="filter('autor')">Autor <i class="fas fa-arrows-alt-v grey-text"></i></th>
+                    <th scope="col" class="filtros" v-on:click="filter('precio')">Precio <i class="fas fa-arrows-alt-v grey-text"></i></th>
+                    <th scope="col" class="filtros" v-on:click="filter('precioreducido')">Oferta <i class="fas fa-arrows-alt-v grey-text"></i></th>
+                    <th scope="col" class="filtros" v-on:click="filter('descuento')">Descuento <i class="fas fa-arrows-alt-v grey-text"></i></th>
+                    <th scope="col" class="filtros" v-on:click="filter('tienda')">Tienda <i class="fas fa-arrows-alt-v grey-text"></i></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -82,7 +82,8 @@
                     title: '',
                     autor: '',
                     fnac: '',
-                    corte: ''
+                    corte: '',
+                    sortOrder: 1
                 },
                 validation: [],
                 books: [],
@@ -118,9 +119,36 @@
                     }); //Una vez convertido lo mostramos por pantalla
                 }
             },
-            created() {
-                //Ejecutar una vez creado el componente
+            filter(filtro){
+                this.books.sort((a,b)=>{
+                    var result = (a[filtro] < b[filtro]) ? -1 : (a[filtro] > b[filtro]) ? 1 : 0;
+                    return result * this.sortOrder;
+                });
+                (this.sortOrder == 1)? this.sortOrder = -1 : this.sortOrder = 1;
             }
+        },
+        mounted() {
+            //Ejecutar una vez creado el componente
+            let book = {
+                titulo: "Hola Juanfra",
+                autor: "Juanfran",
+                precio: "20",
+                precioreducido: "18",
+                descuento: "20",
+                tienda: "Fnac"
+            }
+            this.books.push(book);
+
+            book = {
+                titulo: "asdfasdf",
+                autor: "Jorge",
+                precio: "50",
+                precioreducido: "30",
+                descuento: "12",
+                tienda: "Amazon"
+            }
+            this.books.push(book);
+            console.log("empezado");
         }
     }
 </script>
